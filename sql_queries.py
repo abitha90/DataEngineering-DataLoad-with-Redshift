@@ -122,8 +122,7 @@ staging_songs_copy = (""" copy staging_songs (numSongs, artistId, artistLattitud
                           from {}
                           credentials 'aws_iam_role={}'
                           json 'auto'
-                          region 'us-west-2'
-                          TRUNCATECOLUMNS BLANKSASNULL EMPTYASNULL;
+                          region 'us-west-2';
                       """).format(config.get('S3','SONG_DATA'), 
                                   config.get('IAM_ROLE','ARN'))
 
@@ -147,9 +146,8 @@ songplay_table_insert = (""" INSERT INTO songplay (startTime,
                                    se.location AS location,
                                    se.userAgent AS userAgent
                                 FROM staging_events AS se
-                                LEFT JOIN staging_songs ss on ss.artistName = se.artist AND se.song = ss.title
-                                WHERE se.page = 'NextSong' AND ss.songId IS NOT NULL AND ss.artistId IS NOT NULL AND  
-                                   se.userId IS NOT NULL;
+                                INNER JOIN staging_songs ss on ss.artistName = se.artist AND se.song = ss.title
+                                WHERE se.page = 'NextSong';
 
                                                                   
 """)
